@@ -2,13 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>PermissionAttributeCheck</id>
-    <version>1.0.0.0</version>
-    <title>PermissionAttributeCheck</title>
-    <authors>andre</authors>
-    <owners>andre</owners>
-    <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
-    <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>
-    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    <version>0.1.0.0</version>
+    <title>NC-KMTDAR-PermissionAttributeChecker</title>
+    <authors>Andreas Pørtner Karlsen</authors>
+    <licenseUrl>https://github.com/Felorati/AttributeChecker/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://goto.netcompany.com/cases/GTO475/KMTDAR/default.aspx</projectUrl>
+    <iconUrl>https://pbs.twimg.com/profile_images/788341167263981568/n2_4ptXN.jpg</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>PermissionAttributeCheck</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
