@@ -57,8 +57,7 @@ namespace PermissionAttributeCheck
             //var typeSymbol = semanticModel.GetDeclaredSymbol(methodDecl, cancellationToken);
 
 
-            //var attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("RequirePermission"), SyntaxFactory.AttributeArgumentList());
-            var attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("Obsolete"), SyntaxFactory.AttributeArgumentList());
+            var attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("RequirePermission"), SyntaxFactory.AttributeArgumentList());
             var attributeList = SyntaxFactory.AttributeList().AddAttributes(attribute);
             var newMethodDecl = methodDecl.AddAttributeLists(attributeList);
 
