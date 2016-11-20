@@ -22,7 +22,7 @@ namespace PermissionAttributeCheck
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
         private const string Category = "Naming";
 
-        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Error, isEnabledByDefault: true, description: Description);
         
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
@@ -37,8 +37,12 @@ namespace PermissionAttributeCheck
             var methodSymbol = (IMethodSymbol)context.Symbol;
             
             // Do not match constructors
-            if (methodSymbol.MethodKind == MethodKind.Constructor)
-                return;
+            if (methodSymbol.MethodKind == MethodKind.Constructor) return;
+
+            // Only match public methods
+            if (methodSymbol.DeclaredAccessibility != Accessibility.Public) return;
+
+            // Check if the RequirePermission attribute is not used
             var attributes = methodSymbol.GetAttributes();
             var anyAttribute = attributes.Any(attribute => attribute.AttributeClass.Name.Contains("RequirePermission"));
             if (!anyAttribute)

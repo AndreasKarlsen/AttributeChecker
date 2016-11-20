@@ -15,15 +15,12 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace PermissionAttributeCheck
 {
-    //[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(PermissionAttributeCheckCodeFixProvider)), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(PermissionAttributeCheckCodeFixProvider)), Shared]
     public class PermissionAttributeCheckCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Make uppercase";
+        private const string Title = "Insert PermissionAttribute";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds
-        {
-            get { return ImmutableArray.Create(PermissionAttributeCheckAnalyzer.DiagnosticId); }
-        }
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PermissionAttributeCheckAnalyzer.DiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
@@ -40,16 +37,34 @@ namespace PermissionAttributeCheck
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
             // Find the type declaration identified by the diagnostic.
-            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
+            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
 
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
-                    createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
-                    equivalenceKey: title),
+                    title: Title,
+                    createChangedDocument: c => AddAttributeAsync(context.Document, declaration, c),
+                    equivalenceKey: Title),
                 diagnostic);
-                
+        }
+
+        private async Task<Document> AddAttributeAsync(Document document, MethodDeclarationSyntax methodDecl, CancellationToken cancellationToken)
+        {
+            // Create Attribute
+
+            //var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+            var root = await document.GetSyntaxRootAsync(cancellationToken);
+            //var typeSymbol = semanticModel.GetDeclaredSymbol(methodDecl, cancellationToken);
+
+
+            //var attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("RequirePermission"), SyntaxFactory.AttributeArgumentList());
+            var attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("Obsolete"), SyntaxFactory.AttributeArgumentList());
+            var attributeList = SyntaxFactory.AttributeList().AddAttributes(attribute);
+            var newMethodDecl = methodDecl.AddAttributeLists(attributeList);
+
+            var newRoot = root.ReplaceNode(methodDecl, newMethodDecl);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
         }
 
         private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)

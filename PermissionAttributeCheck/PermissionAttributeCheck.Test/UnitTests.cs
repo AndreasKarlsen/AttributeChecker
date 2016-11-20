@@ -52,6 +52,30 @@ namespace BBR.Application
 
             VerifyCSharpDiagnostic(test);
         }
+        
+        [TestMethod]
+        public void RequirePermission_Is_Not_Set_Protected_Method_Show_No_Error()
+        {
+            var test = @"
+namespace BBR.Application
+{
+    public class FordelingsarealService : IFordelingsarealService
+    {
+        [RequirePermission(BBRPermission.BBRData)]
+        [GetServiceMethod]
+        protected virtual EntityWithMetadata<FordelingsarealDto> GetById(Guid uuid)
+        {
+            var fordelingsareal = _fordelingsarealManager.GetEntityWithHistoryById(uuid, _dateTimeProvider.PointInTime);
+
+            var ret = _fordelingsarealMapper.ToEntityWithMetadata(fordelingsareal, _dateTimeProvider.PointInTime);
+
+            return ret;
+        }
+    }
+}";
+
+            VerifyCSharpDiagnostic(test);
+        }
 
         //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
@@ -91,7 +115,7 @@ namespace BBR.Application
 {
     public class FordelingsarealService : IFordelingsarealService
     {
-        [RequirePermission(BBRPermission.BBRData)]
+        [RequirePermission()]
         [GetServiceMethod]
         public virtual EntityWithMetadata<FordelingsarealDto> GetById(Guid uuid)
         {
@@ -103,7 +127,7 @@ namespace BBR.Application
         }
     }
 }";
-            //VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
